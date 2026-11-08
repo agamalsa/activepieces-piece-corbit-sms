@@ -1,0 +1,49 @@
+# Publishes the piece to npm when a version tag (e.g. 1.0.1) is pushed. The piece is
+# built and bundled with the official Activepieces bundler (preparePieceDistForPublish), so the
+# package is the same self-contained bundle Activepieces installs from npm. npm trusts this
+# workflow directly (Trusted Publishing): no token is stored, and each release is signed.
+name: Publish
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: piece
+      - name: Check the tag matches package.json
+        run: test "$(node -p "require('./piece/package.json').version")" = "${GITHUB_REF_NAME}"
+      - name: Check out Activepieces at the tested commit
+        run: |
+          git init ap
+          git -C ap remote add origin https://github.com/activepieces/activepieces.git
+          git -C ap fetch --depth 1 origin "$(cat piece/AP_REF)"
+          git -C ap checkout FETCH_HEAD
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: node piece/scripts/place-in-activepieces.mjs ap
+      - run: bun install --ignore-scripts
+        working-directory: ap
+      - run: npx turbo run lint --filter=@corbit2/piece-corbit-sms
+        working-directory: ap
+      - run: npx vitest run
+        working-directory: ap/packages/pieces/community/corbit-sms
+      - name: Bundle with the official Activepieces bundler
+        run: npx ts-node -r tsconfig-paths/register --project tools/tsconfig.tools.json tools/scripts/pieces/corbit-bundle.ts
+        working-directory: ap
+      - name: Publish to npm (Trusted Publishing, signed)
+        run: npm publish --provenance --access public
+        working-directory: ap/packages/pieces/community/corbit-sms/dist

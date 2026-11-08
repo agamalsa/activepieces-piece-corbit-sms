@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: piece
+      - name: Check out Activepieces at the tested commit
+        run: |
+          git init ap
+          git -C ap remote add origin https://github.com/activepieces/activepieces.git
+          git -C ap fetch --depth 1 origin "$(cat piece/AP_REF)"
+          git -C ap checkout FETCH_HEAD
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: node piece/scripts/place-in-activepieces.mjs ap
+      - run: bun install --ignore-scripts
+        working-directory: ap
+      - run: npx turbo run build --filter=@corbit2/piece-corbit-sms
+        working-directory: ap
+      - run: npx turbo run lint --filter=@corbit2/piece-corbit-sms
+        working-directory: ap
+      - run: npx vitest run
+        working-directory: ap/packages/pieces/community/corbit-sms

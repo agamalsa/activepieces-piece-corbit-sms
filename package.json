@@ -1,0 +1,44 @@
+{
+  "name": "@corbit2/piece-corbit-sms",
+  "version": "1.0.0",
+  "description": "Activepieces piece for Corbit SMS: send SMS (single and bulk), check delivery status and reports, read the balance and sender names.",
+  "license": "MIT",
+  "author": {
+    "name": "Ahmed Gamal",
+    "email": "a.gamal@corbit.sa"
+  },
+  "homepage": "https://github.com/agamalsa/activepieces-piece-corbit-sms#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agamalsa/activepieces-piece-corbit-sms.git"
+  },
+  "bugs": {
+    "url": "https://github.com/agamalsa/activepieces-piece-corbit-sms/issues"
+  },
+  "keywords": [
+    "activepieces",
+    "activepieces-piece",
+    "corbit",
+    "sms",
+    "otp",
+    "saudi-arabia"
+  ],
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.lib.json && cp package.json dist/",
+    "bundle": "node ../../../../dist/packages/cli/src/index.js pieces bundle",
+    "lint": "eslint 'src/**/*.ts'",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@activepieces/pieces-common": "workspace:*",
+    "@activepieces/pieces-framework": "workspace:*",
+    "@activepieces/core-piece-types": "workspace:*",
+    "@activepieces/core-utils": "workspace:*"
+  },
+  "devDependencies": {
+    "tslib": "2.6.2",
+    "vitest": "5.0.5"
+  }
+}
