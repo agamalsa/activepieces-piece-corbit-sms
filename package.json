@@ -1,6 +1,6 @@
 {
   "name": "@corbit2/piece-corbit-sms",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Activepieces piece for Corbit SMS: send SMS (single and bulk), check delivery status and reports, read the balance and sender names.",
   "license": "MIT",
   "author": {

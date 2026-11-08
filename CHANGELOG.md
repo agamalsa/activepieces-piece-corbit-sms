@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1 (2026-11-08)
+
+- No change to the piece itself.
+- README: how to install the piece from npm in Activepieces, and clearer notes on number lists and AI agents.
+- Published from GitHub Actions with npm provenance.
+
 ## 1.0.0 (2026-11-08)
 
 First release.
